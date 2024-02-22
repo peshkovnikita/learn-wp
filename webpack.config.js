@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// const CopyPlugin = require('copy-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 const devMode = mode === 'development';
@@ -31,9 +30,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
     }),
-    // new CopyPlugin({
-    //   patterns: [{ from: 'static', to: './' }],
-    // }),
   ],
   module: {
     rules: [
@@ -67,50 +63,30 @@ module.exports = {
         ],
       },
       {
-        test: /\.woff2?$/i,
+        test: /\.woff$/i,
         type: 'asset/resource',
         generator: {
           filename: 'fonts/[name][ext]',
         },
       },
       {
-        test: /\.(jpe?g|png|webp|gif|svg)$/i,
-        use: devMode
-          ? []
-          : [
-              {
-                loader: 'image-webpack-loader',
-                options: {
-                  mozjpeg: {
-                    progressive: true,
-                  },
-                  optipng: {
-                    enabled: false,
-                  },
-                  pngquant: {
-                    quality: [0.65, 0.9],
-                    speed: 4,
-                  },
-                  gifsicle: {
-                    interlaced: false,
-                  },
-                  webp: {
-                    quality: 75,
-                  },
-                },
-              },
-            ],
+        test: /\.(svg|png|jpg|jpe?g|webp|ico)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: 'static/[name][ext]'
+        }
       },
       {
-        test: /\.m?js$/i,
-        exclude: /(node_modules|bower_components)/,
+        test: /\.(?:js|mjs|cjs)$/,
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env'],
-          },
-        },
+            presets: [
+              ['@babel/preset-env', {targets: "defaults"}]
+            ]
+          }
+        }
       },
     ],
   },
